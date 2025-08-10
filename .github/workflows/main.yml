@@ -28,4 +28,4 @@ jobs:
           pip install selenium webdriver-manager
 
       - name: Run Naukri Resume Update Script
-        run: python ./test_Naukri.py
+        run: python test_Naukri.py
