@@ -8,10 +8,22 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
+
 def test_Naukri_update():
     # Chrome options
     options = Options()
-    options.add_argument("--start-maximized")
+
+    # Detect if running in GitHub Actions (headless mode)
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        print("Running in GitHub Actions → enabling headless mode")
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-notifications")
+    else:
+        options.add_argument("--start-maximized")
 
     # Create Chrome driver (auto-downloads correct version)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -42,7 +54,7 @@ def test_Naukri_update():
 
         # Check if resume is already uploaded
         try:
-            resume_present = WebDriverWait(driver, 10).until(
+            WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Swarna Priya 6.9Years of exp.pdf')]"))
             )
             print("Resume already present. Deleting...")
@@ -55,17 +67,17 @@ def test_Naukri_update():
                 EC.element_to_be_clickable((By.XPATH, "//div[@class='lightbox model_open flipOpen']//button[@class='btn-dark-ot'][normalize-space()='Delete']"))
             )
             confirm_delete_btn.click()
-            time.sleep(2)  # Wait for deletion to complete
+            time.sleep(2)
         except:
             print("No existing resume found. Proceeding to upload...")
 
-        # Wait for and click the "Update Resume" button if present
+        # Click Update Resume button if present
         try:
             update_button = WebDriverWait(driver, 15).until(
                 EC.element_to_be_clickable((By.XPATH, "//em[text()='Update resume'] | //button[contains(text(),'Update Resume')]"))
             )
             update_button.click()
-            time.sleep(2)  # give time for upload input to appear
+            time.sleep(2)
         except:
             print("⚠ Update Resume button not found, proceeding to file input...")
 
@@ -108,6 +120,7 @@ def test_Naukri_update():
         print(f"❌ An error occurred: {str(e)}")
     finally:
         driver.quit()
+
 
 if __name__ == "__main__":
     test_Naukri_update()
