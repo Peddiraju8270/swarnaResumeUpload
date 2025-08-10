@@ -104,9 +104,9 @@ def test_Naukri_update():
         driver.execute_script("arguments[0].scrollIntoView(true);", file_input)
 
         # Resume path
-        resume_path = os.path.abspath(
-            r"C:\Users\ASUS\OneDrive\Documents\test\naukri_auto_upload-main\Swarna Priya 6.9Years of exp.pdf"
-        )
+        # Resume path (relative to repo)
+resume_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Swarna Priya 6.9Years of exp.pdf"))
+
         file_input.send_keys(resume_path)
 
         # Wait for success message
@@ -124,3 +124,4 @@ def test_Naukri_update():
 
 if __name__ == "__main__":
     test_Naukri_update()
+
