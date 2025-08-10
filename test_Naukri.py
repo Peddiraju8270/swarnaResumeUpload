@@ -13,19 +13,27 @@ def test_Naukri_update():
     # Chrome options
     options = Options()
 
-    # Detect if running in GitHub Actions → enable headless mode
+    # Detect if running in GitHub Actions (headless mode)
     if os.getenv("GITHUB_ACTIONS") == "true":
         print("Running in GitHub Actions → enabling headless mode")
-        options.add_argument("--headless=new")
+        try:
+            options.add_argument("--headless=new")  # Modern headless
+        except:
+            options.add_argument("--headless")  # Fallback for old Chrome
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-notifications")
     else:
+        # Local run → allow GUI but still support headless if needed
+        try:
+            options.add_argument("--headless=new")  # Modern headless
+        except:
+            options.add_argument("--headless")  # Fallback for old Chrome
         options.add_argument("--start-maximized")
 
-    # Create Chrome driver (auto-download correct version)
+    # Create Chrome driver
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     try:
@@ -62,7 +70,6 @@ def test_Naukri_update():
                 EC.element_to_be_clickable((By.XPATH, "//i[@title='Click here to delete your resume']"))
             )
             delete_icon.click()
-            # Wait for confirmation dialog and click Delete
             confirm_delete_btn = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//div[@class='lightbox model_open flipOpen']//button[@class='btn-dark-ot'][normalize-space()='Delete']"))
             )
