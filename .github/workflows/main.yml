@@ -1,49 +1,27 @@
-name: Naukri Resume Updater
+name: Naukri Resume Update
 
-description: >
-  Automates login to Naukri.com and updates the resume with the provided PDF file.
+on:
+  schedule:
+    # Runs every day at 03:30 UTC → 09:00 IST
+    - cron: "30 3 * * *"
+  workflow_dispatch:  # Still allow manual trigger
 
-author: M Swarna Priya
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
 
-credentials:
-  username: "priyaswarna369@gmail.com"
-  password: "Google@1234"  # ⚠ Consider using environment variables or secrets in production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-resume:
-  file_name: "Swarna Priya 6.9Years of exp.pdf"
-  file_path: "C:/Users/ASUS/OneDrive/Documents/test/naukri_auto_upload-main/Swarna Priya 6.9Years of exp.pdf"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-selenium:
-  driver: "chrome"
-  driver_manager: true
-  options:
-    - "--start-maximized"
-  wait_timeout: 20
+      - name: Install dependencies
+        run: |
+          pip install selenium webdriver-manager
 
-urls:
-  login: "https://www.naukri.com/nlogin/login"
-  profile: "https://www.naukri.com/mnjuser/profile?id=&orgn=homepage"
-
-actions:
-  - step: Login to Naukri
-    elements:
-      username_field: { by: "id", value: "usernameField" }
-      password_field: { by: "id", value: "passwordField" }
-      login_button: { by: "xpath", value: "//button[text()='Login']" }
-
-  - step: Delete existing resume if found
-    elements:
-      existing_resume: { by: "xpath", value: "//*[contains(text(),'Swarna Priya 6.9Years of exp.pdf')]" }
-      delete_icon: { by: "xpath", value: "//i[@title='Click here to delete your resume']" }
-      confirm_delete: { by: "xpath", value: "//div[@class='lightbox model_open flipOpen']//button[@class='btn-dark-ot'][normalize-space()='Delete']" }
-
-  - step: Upload new resume
-    elements:
-      update_resume_button: { by: "xpath", value: "//em[text()='Update resume'] | //button[contains(text(),'Update Resume')]" }
-      file_input: { by: "xpath", value: "//input[@type='file']" }
-      success_message: { by: "xpath", value: "//div[contains(text(),'Resume uploaded successfully')]" }
-
-logging:
-  success_message: "✅ Resume updated successfully!"
-  error_message: "❌ An error occurred"
-
+      - name: Run Naukri Resume Update Script
+        run: python ./test_Naukri.py
