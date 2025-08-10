@@ -13,7 +13,7 @@ def test_Naukri_update():
     # Chrome options
     options = Options()
 
-    # Detect if running in GitHub Actions (headless mode)
+    # Detect if running in GitHub Actions → enable headless mode
     if os.getenv("GITHUB_ACTIONS") == "true":
         print("Running in GitHub Actions → enabling headless mode")
         options.add_argument("--headless=new")
@@ -25,7 +25,7 @@ def test_Naukri_update():
     else:
         options.add_argument("--start-maximized")
 
-    # Create Chrome driver (auto-downloads correct version)
+    # Create Chrome driver (auto-download correct version)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     try:
@@ -103,10 +103,10 @@ def test_Naukri_update():
         # Scroll into view
         driver.execute_script("arguments[0].scrollIntoView(true);", file_input)
 
-        # Resume path
         # Resume path (relative to repo)
-resume_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Swarna Priya 6.9Years of exp.pdf"))
-
+        resume_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "Swarna Priya 6.9Years of exp.pdf")
+        )
         file_input.send_keys(resume_path)
 
         # Wait for success message
@@ -124,4 +124,3 @@ resume_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Swarna Pr
 
 if __name__ == "__main__":
     test_Naukri_update()
-
