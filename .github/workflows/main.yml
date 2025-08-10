@@ -2,9 +2,8 @@ name: Naukri Resume Update
 
 on:
   schedule:
-    # Runs every day at 03:30 UTC → 09:00 IST
-    - cron: "30 3 * * *"
-  workflow_dispatch:  # Still allow manual trigger
+    - cron: "30 3 * * *" # 9:00 AM IST
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -13,6 +12,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
       - name: Set up Python
         uses: actions/setup-python@v4
